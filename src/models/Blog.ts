@@ -176,7 +176,7 @@ BlogSchema.pre("save", function (next) {
     // Generate table of contents
     const headingRegex = /<h([2-4])[^>]*id="([^"]+)"[^>]*>([^<]+)<\/h\1>/g;
     const headings = [];
-    let match;
+    let match: RegExpExecArray | null;
 
     while ((match = headingRegex.exec(this.content)) !== null) {
       headings.push({

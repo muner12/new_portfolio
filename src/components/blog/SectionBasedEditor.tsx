@@ -56,7 +56,7 @@ export default function SectionBasedEditor({
     const quillCodeBlockRegex = /<pre[^>]*class="ql-syntax"[^>]*>([\s\S]*?)<\/pre>/gi;
     
     const allMatches: Array<{ index: number; length: number; language: string; code: string }> = [];
-    let match;
+    let match: RegExpExecArray | null;
 
     // Find code blocks with data-language
     codeBlockRegex.lastIndex = 0;
@@ -72,16 +72,17 @@ export default function SectionBasedEditor({
     // Find Quill code blocks
     quillCodeBlockRegex.lastIndex = 0;
     while ((match = quillCodeBlockRegex.exec(html)) !== null) {
+      const currentMatch = match;
       // Check if already matched
       const alreadyMatched = allMatches.some(m => 
-        m.index === match.index && m.length === match[0].length
+        m.index === currentMatch.index && m.length === currentMatch[0].length
       );
       if (!alreadyMatched) {
         allMatches.push({
-          index: match.index,
-          length: match[0].length,
+          index: currentMatch.index,
+          length: currentMatch[0].length,
           language: 'text',
-          code: match[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+          code: currentMatch[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
         });
       }
     }

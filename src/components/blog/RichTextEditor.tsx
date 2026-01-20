@@ -26,8 +26,25 @@ export default function RichTextEditor({
   height = '500px',
   editorRef
 }: RichTextEditorProps) {
-  const internalQuillRef = useRef<any>(null);
-  const quillRef = editorRef || internalQuillRef;
+  const quillInstanceRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Capture ReactQuill instance and sync with external ref
+  useEffect(() => {
+    if (containerRef.current && !quillInstanceRef.current) {
+      const quillElement = containerRef.current.querySelector('.quill');
+      if (quillElement) {
+        // Find the ReactQuill component instance
+        const reactQuillInstance = (quillElement as any).__reactProps$;
+        if (reactQuillInstance) {
+          quillInstanceRef.current = reactQuillInstance;
+          if (editorRef) {
+            (editorRef as any).current = reactQuillInstance;
+          }
+        }
+      }
+    }
+  }, [editorRef]);
 
   // Quill modules configuration
   const modules = useMemo(() => ({
@@ -46,7 +63,7 @@ export default function RichTextEditor({
       ],
       handlers: {
         'code-block': function() {
-          const quill = quillRef.current?.getEditor();
+          const quill = quillInstanceRef.current?.getEditor?.();
           if (!quill) return;
           
           const range = quill.getSelection(true);
@@ -77,7 +94,7 @@ export default function RichTextEditor({
   ];
 
   return (
-    <div className="rich-text-editor-wrapper">
+    <div className="rich-text-editor-wrapper" ref={containerRef}>
       <style jsx global>{`
         .rich-text-editor-wrapper .ql-container {
           font-family: inherit;
@@ -208,7 +225,6 @@ export default function RichTextEditor({
         }
       `}</style>
       <ReactQuill
-        ref={quillRef}
         theme="snow"
         value={value}
         onChange={onChange}

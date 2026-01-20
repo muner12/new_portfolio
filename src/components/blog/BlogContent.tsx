@@ -42,7 +42,7 @@ const BlogContent: React.FC<BlogContentProps> = ({ content }) => {
     const allCodeBlocks: Array<{ index: number; length: number; language: string; code: string; type: 'markdown' | 'html' }> = [];
     
     // Find markdown code blocks
-    let match;
+    let match: RegExpExecArray | null;
     markdownCodeBlockRegex.lastIndex = 0;
     while ((match = markdownCodeBlockRegex.exec(content)) !== null) {
       allCodeBlocks.push({
@@ -69,16 +69,17 @@ const BlogContent: React.FC<BlogContentProps> = ({ content }) => {
     // Find Quill code blocks (pre.ql-syntax)
     quillCodeBlockRegex.lastIndex = 0;
     while ((match = quillCodeBlockRegex.exec(content)) !== null) {
+      const currentMatch = match;
       // Skip if already matched by htmlPreTagWithLangRegex
       const alreadyMatched = allCodeBlocks.some(cb => 
-        cb.index === match.index && cb.length === match[0].length
+        cb.index === currentMatch.index && cb.length === currentMatch[0].length
       );
       if (!alreadyMatched) {
         allCodeBlocks.push({
-          index: match.index,
-          length: match[0].length,
+          index: currentMatch.index,
+          length: currentMatch[0].length,
           language: 'text', // Quill doesn't store language, default to text
-          code: match[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
+          code: currentMatch[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
           type: 'html'
         });
       }
@@ -87,16 +88,17 @@ const BlogContent: React.FC<BlogContentProps> = ({ content }) => {
     // Find plain HTML pre tags with code element
     htmlPreTagRegex.lastIndex = 0;
     while ((match = htmlPreTagRegex.exec(content)) !== null) {
+      const currentMatch = match;
       // Skip if already matched by htmlPreTagWithLangRegex
       const alreadyMatched = allCodeBlocks.some(cb => 
-        cb.index === match.index && cb.length === match[0].length
+        cb.index === currentMatch.index && cb.length === currentMatch[0].length
       );
       if (!alreadyMatched) {
         allCodeBlocks.push({
-          index: match.index,
-          length: match[0].length,
+          index: currentMatch.index,
+          length: currentMatch[0].length,
           language: 'text',
-          code: match[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
+          code: currentMatch[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
           type: 'html'
         });
       }
@@ -105,16 +107,17 @@ const BlogContent: React.FC<BlogContentProps> = ({ content }) => {
     // Find plain HTML pre tags without code element
     htmlPreOnlyRegex.lastIndex = 0;
     while ((match = htmlPreOnlyRegex.exec(content)) !== null) {
+      const currentMatch = match;
       // Skip if already matched
       const alreadyMatched = allCodeBlocks.some(cb => 
-        cb.index === match.index && cb.length === match[0].length
+        cb.index === currentMatch.index && cb.length === currentMatch[0].length
       );
       if (!alreadyMatched) {
         allCodeBlocks.push({
-          index: match.index,
-          length: match[0].length,
+          index: currentMatch.index,
+          length: currentMatch[0].length,
           language: 'text',
-          code: match[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
+          code: currentMatch[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
           type: 'html'
         });
       }
