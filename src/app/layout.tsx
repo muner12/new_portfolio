@@ -25,18 +25,18 @@ const jetbrainsMono = JetBrains_Mono({
 // });
 
 export const metadata = {
-  title: 'John Doe | Creative Developer & Designer',
-  description: 'Portfolio of John Doe, specializing in creative development, UI/UX design, and interactive web experiences.',
+  title: 'Bakht Munir | Creative Developer & Designer',
+  description: 'Portfolio of Bakht Munir, specializing in creative development, UI/UX design, and interactive web experiences.',
   keywords: ['developer', 'designer', 'portfolio', 'frontend', 'react', 'nextjs'],
-  authors: [{ name: 'John Doe' }],
-  creator: 'John Doe',
+  authors: [{ name: 'Bakht Munir' }],
+  creator: 'Bakht Munir',
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: 'https://johndoe.com',
-    siteName: 'John Doe Portfolio',
-    title: 'John Doe | Creative Developer & Designer',
-    description: 'Portfolio of John Doe, specializing in creative development, UI/UX design, and interactive web experiences.',
+    siteName: 'Bakht Munir Portfolio',
+    title: 'Bakht Munir | Creative Developer & Designer',
+    description: 'Portfolio of Bakht Munir, specializing in creative development, UI/UX design, and interactive web experiences.',
     images: [
       {
         url: '/images/og-image.jpg',

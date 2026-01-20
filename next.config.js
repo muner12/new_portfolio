@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['localhost', 'res.cloudinary.com'],
+    domains: [process.env.MONGODB_URI, 'res.cloudinary.com'],
   },
   experimental: {
     serverComponentsExternalPackages: ['mongoose'],

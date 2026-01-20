@@ -24,26 +24,23 @@ export default function NewBlogPostPage() {
       setIsSubmitting(true);
       setError(null);
       
-      // In a real implementation, you would send the data to your API
-      // const response = await fetch('/api/blogs', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(postData),
-      // });
+      // Make actual API call to save the blog post
+      const response = await fetch('/api/blogs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(postData),
+      });
       
-      // if (!response.ok) {
-      //   throw new Error('Failed to create blog post');
-      // }
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to create blog post');
+      }
       
-      // const data = await response.json();
+      const data = await response.json();
       
-      // For demonstration, we'll simulate a successful save
-      console.log('Blog post saved:', postData);
-      
-      // Wait a moment to simulate server processing
-      await new Promise(resolve => setTimeout(resolve, 800));
+      console.log('Blog post saved successfully:', data);
       
       // Redirect to the blog list
       router.push('/admin/blogs');

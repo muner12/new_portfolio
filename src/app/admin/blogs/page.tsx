@@ -18,54 +18,52 @@ export default function AdminBlogsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // In a real implementation, this would fetch from your API
-    const fetchBlogs = async () => {
-      try {
-        setIsLoading(true);
-        // This is a placeholder - in a real app you would fetch from your API
-        // const response = await fetch('/api/blogs/admin');
-        // const data = await response.json();
-        
-        // For demonstration purposes, we'll use dummy data
-        const dummyData: BlogPost[] = [
-          {
-            _id: '1',
-            title: 'Getting Started with Next.js 14',
-            slug: 'getting-started-with-nextjs-14',
-            status: 'published',
-            createdAt: new Date(2023, 10, 15).toISOString(),
-            updatedAt: new Date(2023, 10, 16).toISOString(),
-          },
-          {
-            _id: '2',
-            title: 'Mastering TypeScript for React Development',
-            slug: 'mastering-typescript-for-react',
-            status: 'draft',
-            createdAt: new Date(2023, 10, 10).toISOString(),
-            updatedAt: new Date(2023, 10, 10).toISOString(),
-          },
-          {
-            _id: '3',
-            title: 'The Power of Tailwind CSS',
-            slug: 'power-of-tailwind-css',
-            status: 'archived',
-            createdAt: new Date(2023, 9, 25).toISOString(),
-            updatedAt: new Date(2023, 9, 26).toISOString(),
-          },
-        ];
-        
-        setBlogs(dummyData);
-        setIsLoading(false);
-      } catch (err) {
-        setError('Failed to load blog posts');
-        setIsLoading(false);
-        console.error(err);
+  const fetchBlogs = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const response = await fetch('/api/blogs?limit=100');
+      if (!response.ok) {
+        throw new Error('Failed to fetch blog posts');
       }
-    };
+      
+      const data = await response.json();
+      setBlogs(data.blogs || []);
+      setIsLoading(false);
+    } catch (err) {
+      setError('Failed to load blog posts');
+      setIsLoading(false);
+      console.error(err);
+    }
+  };
 
+  useEffect(() => {
     fetchBlogs();
   }, []);
+
+  const handleDelete = async (id: string, title: string) => {
+    if (!confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/blogs/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to delete blog post');
+      }
+
+      // Refresh the blog list
+      fetchBlogs();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete blog post');
+      console.error(err);
+    }
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -170,9 +168,15 @@ export default function AdminBlogsPage() {
                     <Link href={`/admin/blogs/edit/${blog._id}`} className="text-primary hover:text-primary/80 mr-4">
                       Edit
                     </Link>
-                    <Link href={`/blog/${blog.slug}`} target="_blank" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">
+                    <Link href={`/blog/${blog.slug}`} target="_blank" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 mr-4">
                       View
                     </Link>
+                    <button
+                      onClick={() => handleDelete(blog._id, blog.title)}
+                      className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}

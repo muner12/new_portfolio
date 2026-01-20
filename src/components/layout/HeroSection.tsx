@@ -265,9 +265,9 @@ const HeroSection = () => {
             transition={{ duration: 0.5, delay: 0.7 }}
             className="flex space-x-4 pt-4"
           >
-            <Link href="/projects" legacyBehavior>
-              <motion.a 
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium rounded-full hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 flex items-center"
+            <Link href="/projects">
+              <motion.div
+                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium rounded-full hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 flex items-center cursor-pointer"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -275,17 +275,17 @@ const HeroSection = () => {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
-              </motion.a>
+              </motion.div>
             </Link>
             
-            <Link href="/contact" legacyBehavior>
-              <motion.a 
-                className="px-6 py-3 bg-transparent border border-white/30 text-white font-medium rounded-full hover:bg-white/10 transition-all duration-300"
+            <Link href="/contact">
+              <motion.div
+                className="px-6 py-3 bg-transparent border border-white/30 text-white font-medium rounded-full hover:bg-white/10 transition-all duration-300 cursor-pointer"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 Contact Me
-              </motion.a>
+              </motion.div>
             </Link>
           </motion.div>
           

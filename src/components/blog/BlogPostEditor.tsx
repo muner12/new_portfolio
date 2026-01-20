@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { IBlog } from '@/models/Blog';
 import { motion } from 'framer-motion';
+import SectionBasedEditor from './SectionBasedEditor';
+import BlogContent from './BlogContent';
 
 interface Category {
   _id: string;
@@ -52,6 +54,9 @@ export default function BlogPostEditor({ post, onSave, categories = [] }: BlogPo
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  
+  // Editor mode: 'edit' or 'preview'
+  const [editorMode, setEditorMode] = useState<'edit' | 'preview'>('edit');
   
   // Autosave functionality
   const autoSaveInterval = useRef<NodeJS.Timeout | null>(null);
@@ -284,21 +289,44 @@ export default function BlogPostEditor({ post, onSave, categories = [] }: BlogPo
           
           {/* Content */}
           <div>
-            <label htmlFor="content" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <div className="flex items-center justify-between mb-1">
+              <label htmlFor="content" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Content <span className="text-red-500">*</span>
             </label>
-            {/* This would typically be a rich text editor like TinyMCE, CKEditor, etc. */}
-            <textarea
-              id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={15}
-              className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="Post content"
-              required
-            />
+              <div className="flex items-center gap-2">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  type="button"
+                  onClick={() => setEditorMode(editorMode === 'edit' ? 'preview' : 'edit')}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                    editorMode === 'edit'
+                      ? 'bg-primary text-white'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  {editorMode === 'edit' ? 'Preview' : 'Edit'}
+                </motion.button>
+              </div>
+            </div>
+            
+            {editorMode === 'edit' ? (
+              <div className="border border-gray-300 dark:border-gray-700 rounded-md mb-2 p-4 bg-white dark:bg-gray-900">
+                <SectionBasedEditor
+                  value={content}
+                  onChange={setContent}
+                  placeholder="Add text and code sections to build your blog post"
+                />
+              </div>
+            ) : (
+              <div className="border border-gray-300 dark:border-gray-700 rounded-md p-6 bg-white dark:bg-gray-900 min-h-[600px]">
+                <BlogContent content={content || '<p>Start writing to see preview...</p>'} />
+            </div>
+            )}
             <p className="text-xs text-gray-500 mt-1">
-              This would be replaced with a proper rich text editor in production.
+              {editorMode === 'edit' 
+                ? 'Add separate text and code sections. Drag sections to reorder them. Each section can be edited independently.'
+                : 'Preview mode shows how your content will appear to readers.'}
             </p>
           </div>
         </div>

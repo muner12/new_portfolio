@@ -152,4 +152,61 @@ textarea {
   to {
     background-position: 0 0;
   }
+}
+
+/* Syntax Highlighter Custom Styles */
+.syntax-highlighter-wrapper pre {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+.syntax-highlighter-wrapper code {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace !important;
+}
+
+/* Override syntax highlighter styles for better VS Code appearance */
+.syntax-highlighter-wrapper .token.keyword {
+  color: #569cd6;
+}
+
+.syntax-highlighter-wrapper .token.string {
+  color: #ce9178;
+}
+
+.syntax-highlighter-wrapper .token.function {
+  color: #dcdcaa;
+}
+
+.syntax-highlighter-wrapper .token.comment {
+  color: #6a9955;
+  font-style: italic;
+}
+
+.syntax-highlighter-wrapper .token.number {
+  color: #b5cea8;
+}
+
+.syntax-highlighter-wrapper .token.operator {
+  color: #d4d4d4;
+}
+
+.syntax-highlighter-wrapper .token.punctuation {
+  color: #d4d4d4;
+}
+
+.syntax-highlighter-wrapper .token.variable {
+  color: #9cdcfe;
+}
+
+.syntax-highlighter-wrapper .token.property {
+  color: #9cdcfe;
+}
+
+.syntax-highlighter-wrapper .token.class-name {
+  color: #4ec9b0;
+}
+
+.syntax-highlighter-wrapper .token.constant {
+  color: #569cd6;
 } 

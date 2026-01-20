@@ -88,22 +88,24 @@ export default function EditBlogPostPage() {
         setIsLoading(true);
         setError(null);
         
-        // In a real implementation, you would fetch from your API
-        // const response = await fetch(`/api/blogs/${postId}`);
-        // if (!response.ok) {
-        //   throw new Error('Failed to fetch blog post');
-        // }
-        // const data = await response.json();
-        
-        // For demonstration, we'll use the mock data
-        if (!mockBlogPosts[postId as keyof typeof mockBlogPosts]) {
-          throw new Error('Blog post not found');
+        const response = await fetch(`/api/blogs/${postId}`);
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('Blog post not found');
+          }
+          throw new Error('Failed to fetch blog post');
         }
         
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 500));
+        const data = await response.json();
         
-        setBlogPost(mockBlogPosts[postId as keyof typeof mockBlogPosts]);
+        // Convert categories to array of IDs if they're populated objects
+        if (data.categories && data.categories.length > 0) {
+          data.categories = data.categories.map((cat: any) => 
+            typeof cat === 'object' ? cat._id : cat
+          );
+        }
+        
+        setBlogPost(data);
         setIsLoading(false);
       } catch (err) {
         console.error('Error fetching blog post:', err);
@@ -120,38 +122,27 @@ export default function EditBlogPostPage() {
       setIsSubmitting(true);
       setError(null);
       
-      // In a real implementation, you would send the data to your API
-      // const response = await fetch(`/api/blogs/${postId}`, {
-      //   method: 'PUT',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(postData),
-      // });
-      
-      // if (!response.ok) {
-      //   throw new Error('Failed to update blog post');
-      // }
-      
-      // const data = await response.json();
-      
-      // For demonstration, we'll simulate a successful save
-      console.log('Blog post updated:', postData);
-      
-      // Wait a moment to simulate server processing
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // Update the local state with the new data
-      setBlogPost({
-        ...blogPost,
-        ...postData,
-        updatedAt: new Date().toISOString(),
+      const response = await fetch(`/api/blogs/${postId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(postData),
       });
       
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to update blog post');
+      }
+      
+      const data = await response.json();
+      
+      // Update the local state with the new data
+      setBlogPost(data);
       setIsSubmitting(false);
       
-      // Optional: Redirect back to the list
-      // router.push('/admin/blogs');
+      // Redirect back to the list after successful save
+      router.push('/admin/blogs');
       
     } catch (err) {
       console.error('Error updating blog post:', err);

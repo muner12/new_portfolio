@@ -4,13 +4,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import PageTransition from '@/components/layout/PageTransition';
 import HeroSection from '@/components/layout/HeroSection';
+import SkillsSection from '@/components/home/SkillsSection';
+import StatsSection from '@/components/home/StatsSection';
+import ServicesSection from '@/components/home/ServicesSection';
+import ExperienceTimeline from '@/components/home/ExperienceTimeline';
+import TestimonialsSection from '@/components/home/TestimonialsSection';
 import { motion, useScroll, useTransform, useMotionValueEvent, cubicBezier } from 'framer-motion';
 import ParallaxText from '@/components/ui/ParallaxText';
+import FeaturedProjects from '@/components/home/FeaturedProjects';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import MagneticButton from '@/components/ui/MagneticButton';
 import ScrollRevealText from '@/components/ui/ScrollRevealText';
-import GlassMorphism from '@/components/ui/GlassMorphism';
-import TiltCard from '@/components/ui/3DCard';
 import FloatingElement from '@/components/ui/FloatingElement';
 
 export default function Home() {
@@ -131,21 +135,7 @@ export default function Home() {
           backfaceVisibility: 'hidden'
         }}
       >
-        <div className="w-64 h-2 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
-          <motion.div 
-            className={`h-full rounded-full ${sectionColors[currentSection]}`}
-            style={{ 
-              width: `${scale}%`,
-              transform: 'translateZ(0)' // Force GPU acceleration
-            }}
-            transition={{ type: "tween", ease: "linear" }} // Smoother indicator transition
-          />
-        </div>
-        
-        {/* Mobile indicator showing current section */}
-        <span className="bg-white dark:bg-gray-900 text-xs px-2 py-1 rounded-md shadow-md md:hidden">
-          {sections[currentSection]}
-        </span>
+       
       </motion.div>
       
       <div className="relative" ref={containerRef}>
@@ -210,383 +200,181 @@ export default function Home() {
           ))}
         </div>
         
-        {/* About Section Teaser - optimized animations */}
-        <motion.section 
-          id="about"
-          className="py-16 bg-white dark:bg-gray-900 overflow-hidden relative"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-20%" }} // Increased margin for earlier animation start
-          variants={fadeInUp}
-        >
-          {/* Glassmorphism decorative element */}
-          <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-blue-500/10 backdrop-blur-sm -mr-32 -mt-32"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 rounded-full bg-purple-500/10 backdrop-blur-sm -ml-48 -mb-48"></div>
-          
-          <div className="container px-4 mx-auto relative">
-            <motion.h2 
-              className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white relative inline-block mx-auto optimize-gpu"
-              variants={fadeInUp}
-            >
-              <span className="relative z-10">About Me</span>
-              <motion.span 
-                className="absolute bottom-0 left-0 h-3 w-full bg-primary/20 -z-10 optimize-gpu"
-                initial={{ width: 0 }}
-                whileInView={{ width: "100%" }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7, delay: 0.5, ease: "easeOut" }}
-              ></motion.span>
-            </motion.h2>
-            <div className="max-w-3xl mx-auto text-center">
-              <ScrollRevealText 
-                className="text-lg text-gray-700 dark:text-gray-300 mb-8"
-                direction="up"
-                staggerChildren={0.005} // Reduced stagger time for smoother animation
-              >
-                I'm a passionate full-stack developer with 5+ years of experience building
-                web applications and digital experiences. I specialize in React, Next.js,
-                Node.js, and modern web technologies.
-              </ScrollRevealText>
-              <motion.div 
-                variants={popIn}
-                className="optimize-gpu"
-              >
-                <MagneticButton strength={15} rounded="full">
-                  <Link 
-                    href="/about"
-                    className="px-6 py-3 bg-gray-900 text-white dark:bg-gray-700 rounded-full shadow-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors relative overflow-hidden group inline-block"
-                  >
-                    <span className="relative z-10">Learn More</span>
-                    <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-primary/40 to-purple-500/40 opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  </Link>
-                </MagneticButton>
-              </motion.div>
-            </div>
-          </div>
-        </motion.section>
+        {/* Stats Section */}
+        <StatsSection />
 
-        {/* Featured Projects - with optimized animations */}
-        <motion.section 
-          id="projects"
-          className="py-16 bg-gray-50 dark:bg-gray-800 relative"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-20%" }} // Increased margin for earlier animation start
-          variants={staggerContainer}
-        >
-          {/* SVG pattern overlay - simplified for better performance */}
-          <div className="absolute inset-0 opacity-5 pointer-events-none overflow-hidden">
-            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-              <defs>
-                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 0 10 L 40 10 M 10 0 L 10 40" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        strokeWidth="0.5"/>
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#grid)" />
-            </svg>
-          </div>
-          
-          <div className="container px-4 mx-auto relative">
-            {/* Parallax text section */}
-            <div className="my-12 -mx-4 py-4 bg-gradient-to-r from-indigo-500/10 via-transparent to-indigo-500/10">
-              <ParallaxText 
-                className="text-3xl md:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 py-6 optimize-gpu"
-              >
-                Featured Projects
-              </ParallaxText>
-            </div>
-            
-            <div className="flex justify-between items-center mb-8">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-                className="max-w-2xl"
-              >
-                <p className="text-gray-600 dark:text-gray-400">
-                  Check out some of my recent work. Each project represents unique challenges and solutions.
-                </p>
-              </motion.div>
-              <motion.div 
-                variants={fadeInUp}
-              >
-                <Link 
-                  href="/projects"
-                  className="text-primary hover:text-blue-700 transition-colors dark:text-blue-400 dark:hover:text-blue-300 relative group"
-                >
-                  <span>View All Projects</span>
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
-                </Link>
-              </motion.div>
-            </div>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Project Cards with 3D tilt effect */}
-              {[
-                {
-                  title: "E-Commerce Platform",
-                  description: "A modern e-commerce solution with React, Node.js, and MongoDB.",
-                  image: "/images/project1.jpg",
-                  tags: [
-                    { name: "React", color: "blue" },
-                    { name: "Node.js", color: "green" },
-                    { name: "MongoDB", color: "purple" }
-                  ],
-                  link: "/projects/e-commerce-platform"
-                },
-                {
-                  title: "Task Management App",
-                  description: "A productivity tool for teams with real-time collaboration features.",
-                  image: "/images/project2.jpg",
-                  tags: [
-                    { name: "Next.js", color: "blue" },
-                    { name: "Firebase", color: "yellow" },
-                    { name: "Tailwind", color: "red" }
-                  ],
-                  link: "/projects/task-management-app"
-                },
-                {
-                  title: "Health Monitoring System",
-                  description: "A health tracking application with data visualization and insights.",
-                  image: "/images/project3.jpg",
-                  tags: [
-                    { name: "React", color: "blue" },
-                    { name: "GraphQL", color: "purple" },
-                    { name: "D3.js", color: "green" }
-                  ],
-                  link: "/projects/health-monitoring-system"
-                }
-              ].map((project, index) => (
-                <motion.div 
-                  key={index}
-                  variants={popIn}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ 
-                    opacity: 1, 
-                    y: 0, 
-                    transition: { 
-                      duration: 0.5, 
-                      delay: index * 0.07 // Slightly reduced delay for smoother staggering
-                    }
-                  }}
-                  viewport={{ once: true, margin: "-10%" }}
-                  className="optimize-gpu"
-                >
-                  <TiltCard
-                    tiltMaxAngle={8} // Reduced from 12 for smoother animation
-                    tiltScale={1.02} // Reduced from 1.03 for smoother animation
-                    glareEnable={true}
-                    glareMaxOpacity={0.2}
-                    glareColor={index === 0 ? '#3B82F6' : index === 1 ? '#8B5CF6' : '#0D9488'}
-                    perspective={1000}
-                    className="h-full"
-                  >
-                    <GlassMorphism 
-                      intensity="high"
-                      color={index === 0 ? "blue" : index === 1 ? "purple" : "teal"}
-                      hover={false}
-                      border={true}
-                      rounded="xl"
-                      className="h-full flex flex-col"
-                    >
-                      <div className="relative h-48 overflow-hidden group">
-                        <Image
-                          src={project.image}
-                          alt={project.title}
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          className="object-cover group-hover:scale-110 transition-transform duration-500"
-                          priority={index < 2} // Prioritize loading first two images
-                        />
-                        {/* Glassmorphism overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4 backdrop-blur-sm">
-                          <Link 
-                            href={project.link}
-                            className="text-white font-medium text-sm px-3 py-1.5 bg-primary/80 rounded-full backdrop-blur-sm"
-                          >
-                            View Details
-                          </Link>
-                        </div>
-                      </div>
-                      <div className="p-6 flex-1 flex flex-col relative backdrop-blur-sm">
-                        {/* Decorative element */}
-                        <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-primary/5 to-transparent rounded-bl-full -mt-6 -mr-6"></div>
-                        
-                        <ScrollRevealText 
-                          className="text-xl font-bold text-gray-900 dark:text-white mb-2"
-                          direction="left"
-                          delay={0.1 + index * 0.05} // Reduced delay for smoother animation
-                          staggerChildren={0.01} // Faster stagger for smoother animation
-                        >
-                          {project.title}
-                        </ScrollRevealText>
-                        <p className="text-gray-600 dark:text-gray-400 mb-4 flex-1">
-                          {project.description}
-                        </p>
-                        <div className="flex gap-2 mb-4 flex-wrap">
-                          {project.tags.map((tag, idx) => (
-                            <span 
-                              key={idx} 
-                              className={`px-3 py-1 bg-${tag.color}-100 text-${tag.color}-800 text-sm rounded-full dark:bg-${tag.color}-900/30 dark:text-${tag.color}-300`}
-                            >
-                              {tag.name}
-                            </span>
-                          ))}
-                        </div>
-                        <Link 
-                          href={project.link}
-                          className="text-primary hover:text-blue-700 font-medium flex items-center group"
-                        >
-                          <span>View Case Study</span>
-                          <svg 
-                            xmlns="http://www.w3.org/2000/svg" 
-                            className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform" 
-                            fill="none" 
-                            viewBox="0 0 24 24" 
-                            stroke="currentColor"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </Link>
-                      </div>
-                    </GlassMorphism>
-                  </TiltCard>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </motion.section>
+        {/* Skills Section */}
+        <SkillsSection />
+
+        {/* Services Section */}
+        <ServicesSection />
+
+
+        {/* Featured Projects */}
+        <FeaturedProjects />
+
+        {/* Experience Timeline */}
+        <ExperienceTimeline />
+
+        {/* Testimonials Section */}
+        <TestimonialsSection />
 
         {/* Blog Section Teaser */}
         <motion.section 
           id="blog"
-          className="py-16 bg-white dark:bg-gray-900 relative"
+          className="py-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 relative"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-20%" }}
+          viewport={{ once: true, margin: "-10%" }}
           variants={staggerContainer}
         >
-          {/* Animated background wave pattern - optimized */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-10">
-            <svg 
-              viewBox="0 0 1200 300" 
-              xmlns="http://www.w3.org/2000/svg"
-              className="absolute w-full optimize-gpu"
-              preserveAspectRatio="none"
-              style={{ height: '100%' }}
-            >
-              <motion.path 
-                d="M 0 100 Q 300 150 600 100 Q 900 50 1200 100 L 1200 300 L 0 300 Z"
-                fill="currentColor"
-                initial={{ d: "M 0 100 Q 300 150 600 100 Q 900 50 1200 100 L 1200 300 L 0 300 Z" }}
-                animate={{ 
-                  d: [
-                    "M 0 100 Q 300 150 600 100 Q 900 50 1200 100 L 1200 300 L 0 300 Z",
-                    "M 0 80 Q 300 120 600 130 Q 900 140 1200 80 L 1200 300 L 0 300 Z",
-                    "M 0 100 Q 300 150 600 100 Q 900 50 1200 100 L 1200 300 L 0 300 Z"
-                  ] 
-                }}
-                transition={{
-                  repeat: Infinity,
-                  duration: 20,
-                  ease: "linear" // Use linear for smoother infinite animation
-                }}
-              />
-            </svg>
+          {/* Background decoration */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-10 left-10 w-72 h-72 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-10 right-10 w-72 h-72 bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-3xl" />
           </div>
-          
-          <div className="container px-4 mx-auto relative">
-            <div className="flex justify-between items-center mb-12">
+
+          <div className="container px-4 mx-auto relative z-10 max-w-7xl">
+            {/* Header */}
+            <div className="text-center mb-16">
+              <motion.div
+                variants={fadeInUp}
+                className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm border border-blue-500/20 mb-6"
+              >
+                <svg className="w-8 h-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </motion.div>
               <motion.h2 
-                className="text-3xl font-bold text-gray-900 dark:text-white"
+                className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4"
                 variants={fadeInUp}
               >
                 Recent Articles
               </motion.h2>
-              <motion.div 
+              <motion.p 
+                className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
                 variants={fadeInUp}
               >
-                <Link 
-                  href="/blog"
-                  className="text-primary hover:text-blue-700 transition-colors dark:text-blue-400 dark:hover:text-blue-300 relative group"
-                >
-                  <span>View All Articles</span>
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
-                </Link>
-              </motion.div>
+                Insights, tutorials, and thoughts on web development and technology
+              </motion.p>
             </div>
             
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Blog card with staggered reveal animation */}
-              {[1, 2, 3].map((item) => (
-                <motion.div 
-                  key={item} 
+            {/* Blog Grid */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+              {[
+                { 
+                  title: "Building Scalable Web Applications with Next.js",
+                  category: "Development",
+                  date: "Oct 15, 2023",
+                  readTime: 8,
+                  excerpt: "Learn how to build performant and scalable web applications using Next.js 14 with app router and server components."
+                },
+                { 
+                  title: "Modern React Patterns and Best Practices",
+                  category: "React",
+                  date: "Oct 12, 2023",
+                  readTime: 6,
+                  excerpt: "Explore advanced React patterns including custom hooks, context optimization, and state management strategies."
+                },
+                { 
+                  title: "Mastering TypeScript for Better Code Quality",
+                  category: "TypeScript",
+                  date: "Oct 08, 2023",
+                  readTime: 10,
+                  excerpt: "Deep dive into TypeScript features and how to leverage them for writing more maintainable and type-safe code."
+                }
+              ].map((article, index) => (
+                <motion.article 
+                  key={index} 
                   variants={popIn}
-                  whileHover={{ 
-                    y: -10,
-                    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
-                  }}
-                  className="optimize-gpu"
+                  className="group bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-all duration-300"
                 >
-                  <GlassMorphism
-                    intensity="medium"
-                    color={item === 1 ? "pink" : item === 2 ? "blue" : "purple"}
-                    hover={true}
-                    className="h-full flex flex-col"
-                  >
-                    <div className="relative h-48 overflow-hidden group">
-                      <Image
-                        src={`/images/blog${item}.jpg`}
-                        alt={`Blog ${item}`}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-700 group-hover:scale-110"
-                        loading={item === 1 ? "eager" : "lazy"} // Only eagerly load first image
-                      />
-                      {/* Radial gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/50 opacity-0 group-hover:opacity-100 transition-all duration-300 
-                                      bg-[radial-gradient(ellipse_at_center,_rgba(0,0,0,0)_0%,_rgba(0,0,0,0.5)_100%)]"></div>
+                  {/* Image */}
+                  <div className="relative h-56 overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-500/20 dark:from-blue-500/10 dark:to-purple-500/10">
+                    <Image
+                      src={`/images/blog${index + 1}.jpg`}
+                      alt={article.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                      loading={index === 0 ? "eager" : "lazy"}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    
+                    {/* Category Badge */}
+                    <div className="absolute top-4 left-4">
+                      <span className="px-3 py-1 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm text-gray-900 dark:text-white text-xs font-semibold rounded-full border border-gray-200 dark:border-gray-700">
+                        {article.category}
+                      </span>
                     </div>
-                    <div className="p-6 flex-1 flex flex-col">
-                      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
-                        <span>Oct {10 + item}, 2023</span>
-                        <span className="mx-2">•</span>
-                        <span>5 min read</span>
-                      </div>
-                      <ScrollRevealText 
-                        className="text-xl font-bold text-gray-900 dark:text-white mb-2"
-                        direction="right"
-                        staggerChildren={0.005} // Faster stagger
-                      >
-                        Blog Post Title {item}
-                      </ScrollRevealText>
-                      <p className="text-gray-600 dark:text-gray-400 mb-4 flex-1">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl vel ultricies lacinia.
-                      </p>
-                      <Link 
-                        href={`/blog/post-${item}`}
-                        className="text-primary hover:text-blue-700 font-medium inline-flex items-center group"
-                      >
-                        <span>Read More</span>
-                        <svg 
-                          xmlns="http://www.w3.org/2000/svg" 
-                          className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform" 
-                          fill="none" 
-                          viewBox="0 0 24 24" 
-                          stroke="currentColor"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="p-6">
+                    {/* Meta Info */}
+                    <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400 mb-3">
+                      <div className="flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                      </Link>
+                        <span>{article.date}</span>
+                      </div>
+                      <span>•</span>
+                      <div className="flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{article.readTime} min read</span>
+                      </div>
                     </div>
-                  </GlassMorphism>
-                </motion.div>
+                    
+                    {/* Title */}
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                      <Link href={`/blog/post-${index + 1}`}>
+                        {article.title}
+                      </Link>
+                    </h3>
+                    
+                    {/* Excerpt */}
+                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3 leading-relaxed">
+                      {article.excerpt}
+                    </p>
+                    
+                    {/* Read More Link */}
+                    <Link 
+                      href={`/blog/post-${index + 1}`}
+                      className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium text-sm group/link"
+                    >
+                      <span>Read Article</span>
+                      <svg 
+                        className="w-4 h-4 transform group-hover/link:translate-x-1 transition-transform" 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </Link>
+                  </div>
+                </motion.article>
               ))}
             </div>
+
+            {/* View All Button */}
+            <motion.div 
+              className="text-center"
+              variants={fadeInUp}
+            >
+              <Link 
+                href="/blog"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                <span>View All Articles</span>
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </Link>
+            </motion.div>
           </div>
         </motion.section>
 

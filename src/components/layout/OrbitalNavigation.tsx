@@ -30,20 +30,11 @@ const OrbitalNavigation = () => {
   const [orbitComplete, setOrbitComplete] = useState(false);
   const [menuSize, setMenuSize] = useState({ width: 350, height: 350 });
   const orbitalRef = useRef<HTMLDivElement>(null);
-  
-  // New state for tracking if we're in the about section
+  const [isMounted, setIsMounted] = useState(false);
   const [isAboutSectionVisible, setIsAboutSectionVisible] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [navTransitioned, setNavTransitioned] = useState(false);
-  
-  // Pulse animation for improved visibility
   const [isPulsing, setIsPulsing] = useState(true);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsPulsing(false);
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, []);
   
   // Navigation items with icons
   const navRoutes: NavRoute[] = [
@@ -78,9 +69,28 @@ const OrbitalNavigation = () => {
       color: 'from-red-500 to-pink-400'
     },
   ];
+  
+  // Check if we're on auth or admin pages
+  const isAuthPage = pathname?.startsWith('/login') || pathname?.startsWith('/register');
+  const isAdminPage = pathname?.startsWith('/admin');
+  
+  // Handle client-side mounting
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Pulse animation for improved visibility
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsPulsing(false);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Track scroll position and detect when we reach the About section
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
@@ -89,7 +99,7 @@ const OrbitalNavigation = () => {
       const scrollPercentage = Math.min(scrollY / windowHeight, 1);
       setScrollProgress(scrollPercentage);
       
-      // Check if About section is visible (assuming it's the section after hero, around 80-100% scroll of first viewport)
+      // Check if About section is visible
       if (scrollPercentage > 0.8 && !isAboutSectionVisible) {
         setIsAboutSectionVisible(true);
       } else if (scrollPercentage < 0.4 && isAboutSectionVisible) {
@@ -106,12 +116,10 @@ const OrbitalNavigation = () => {
     let timer: NodeJS.Timeout;
     
     if (isAboutSectionVisible && !navTransitioned) {
-      // Add slight delay before showing the vertical navigation
       timer = setTimeout(() => {
         setNavTransitioned(true);
       }, 300);
     } else if (!isAboutSectionVisible && navTransitioned) {
-      // Add slight delay before showing the horizontal navigation
       timer = setTimeout(() => {
         setNavTransitioned(false);
       }, 300);
@@ -124,15 +132,17 @@ const OrbitalNavigation = () => {
 
   // Responsive sizing for orbital menu
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const handleResize = () => {
       if (window.innerWidth < 640) {
-        setMenuSize({ width: 280, height: 280 });
-      } else if (window.innerWidth < 768) {
         setMenuSize({ width: 320, height: 320 });
+      } else if (window.innerWidth < 768) {
+        setMenuSize({ width: 400, height: 400 });
       } else if (window.innerWidth < 1024) {
-        setMenuSize({ width: 380, height: 380 });
+        setMenuSize({ width: 480, height: 480 });
       } else {
-        setMenuSize({ width: 450, height: 450 });
+        setMenuSize({ width: 550, height: 550 });
       }
     };
     
@@ -163,14 +173,23 @@ const OrbitalNavigation = () => {
     }
   }, [isOpen]);
 
+  // If not mounted yet or on auth/admin pages, return null
+  if (!isMounted || isAuthPage || isAdminPage) {
+    return null;
+  }
+
   // Calculate orbit position based on screen size
   const getOrbitRadius = () => {
+    if (typeof window === 'undefined') return 12;
+    
     if (window.innerWidth < 640) {
-      return 6; // 6rem for small screens
+      return 7.5;
     } else if (window.innerWidth < 768) {
-      return 7; // 7rem for medium screens
+      return 9;
+    } else if (window.innerWidth < 1024) {
+      return 11;
     } else {
-      return 10; // 10rem for large screens
+      return 13;
     }
   };
 
@@ -249,7 +268,7 @@ const OrbitalNavigation = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none overflow-auto py-16"
+            className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none overflow-y-auto py-20 px-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -279,23 +298,32 @@ const OrbitalNavigation = () => {
 
               {/* Navigation items */}
               {navRoutes.map((route, index) => {
-                const angle = (index * (360 / navRoutes.length));
+                // Start from top (-90 degrees) and distribute evenly
+                const angle = -90 + (index * (360 / navRoutes.length));
                 const isActive = route.name.toLowerCase() === activeTab;
                 const orbitRadius = getOrbitRadius();
+                
+                // Calculate position in circle
+                const x = Math.cos(angle * (Math.PI / 180)) * orbitRadius;
+                const y = Math.sin(angle * (Math.PI / 180)) * orbitRadius;
                 
                 return (
                   <motion.div
                     key={route.name}
-                    className="absolute top-1/2 left-1/2 pointer-events-auto"
+                    className="absolute pointer-events-auto"
+                    style={{
+                      top: '50%',
+                      left: '50%',
+                    }}
                     initial={{ 
-                      x: 0, 
-                      y: 0, 
+                      x: '-50%', 
+                      y: '-50%', 
                       scale: 0,
                       opacity: 0
                     }}
                     animate={{ 
-                      x: `calc(${Math.cos(angle * (Math.PI / 180))} * ${orbitRadius}rem)`,
-                      y: `calc(${Math.sin(angle * (Math.PI / 180))} * ${orbitRadius}rem)`,
+                      x: `calc(${x}rem - 50%)`,
+                      y: `calc(${y}rem - 50%)`,
                       scale: 1,
                       opacity: 1
                     }}
@@ -306,13 +334,13 @@ const OrbitalNavigation = () => {
                       duration: 0.5
                     }}
                   >
-                    <Link href={route.href} legacyBehavior>
-                      <motion.a
-                        className={`flex flex-col items-center justify-center space-y-2 ${
+                    <Link href={route.href}>
+                      <motion.div
+                        className={`flex flex-col items-center justify-center space-y-1.5 cursor-pointer ${
                           isActive 
                             ? `bg-gradient-to-r ${route.color} text-white` 
                             : 'bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white hover:text-white'
-                        } w-20 h-20 md:w-24 md:h-24 rounded-xl shadow-lg border border-white/10`}
+                        } w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-xl shadow-lg border border-white/10`}
                         whileHover={{ 
                           scale: 1.1,
                           boxShadow: "0 0 20px rgba(255, 255, 255, 0.5)"
@@ -325,7 +353,7 @@ const OrbitalNavigation = () => {
                       >
                         <svg 
                           xmlns="http://www.w3.org/2000/svg" 
-                          className="h-6 w-6" 
+                          className="h-6 w-6 sm:h-7 sm:w-7" 
                           fill="none" 
                           viewBox="0 0 24 24" 
                           stroke="currentColor" 
@@ -333,8 +361,8 @@ const OrbitalNavigation = () => {
                         >
                           <path strokeLinecap="round" strokeLinejoin="round" d={route.icon} />
                         </svg>
-                        <span className="text-xs font-medium">{route.name}</span>
-                      </motion.a>
+                        <span className="text-xs sm:text-sm font-medium">{route.name}</span>
+                      </motion.div>
                     </Link>
                   </motion.div>
                 );
@@ -342,14 +370,14 @@ const OrbitalNavigation = () => {
 
               {/* Central logo/branding */}
               <motion.div 
-                className="absolute inset-0 flex items-center justify-center"
+                className="absolute inset-0 flex items-center justify-center pointer-events-auto"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
               >
-                <Link href="/" legacyBehavior>
-                  <motion.a 
-                    className={`h-16 w-16 md:h-20 md:w-20 rounded-full bg-gradient-to-r ${activeGradient} flex items-center justify-center shadow-lg border-2 border-white/20`}
+                <Link href="/">
+                  <motion.div 
+                    className={`h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-28 rounded-full bg-gradient-to-r ${activeGradient} flex items-center justify-center shadow-lg border-2 border-white/20 cursor-pointer`}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => {
@@ -357,14 +385,14 @@ const OrbitalNavigation = () => {
                       setIsOpen(false);
                     }}
                   >
-                    <span className="text-xl md:text-2xl font-bold text-white">JD</span>
-                  </motion.a>
+                    <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">BM</span>
+                  </motion.div>
                 </Link>
               </motion.div>
 
               {/* Social links */}
               <motion.div
-                className="absolute bottom-12 inset-x-0 flex justify-center space-x-4 pointer-events-auto px-4 flex-wrap"
+                className="absolute -bottom-32 sm:-bottom-28 inset-x-0 flex justify-center gap-3 pointer-events-auto px-4"
                 variants={{
                   hidden: { 
                     opacity: 0,
@@ -394,11 +422,12 @@ const OrbitalNavigation = () => {
                     }}
                     whileHover={{ 
                       y: -5,
+                      scale: 1.1,
                       backgroundColor: "rgba(255, 255, 255, 0.2)"
                     }}
-                    className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 text-white m-2"
+                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 text-white"
                   >
-                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="currentColor">
                       <path d={social.icon} />
                     </svg>
                   </motion.a>
@@ -407,12 +436,12 @@ const OrbitalNavigation = () => {
 
               {/* Copyright text */}
               <motion.div
-                className="absolute bottom-6 inset-x-0 text-center text-xs text-white/50 pointer-events-none"
+                className="absolute -bottom-44 sm:-bottom-40 inset-x-0 text-center text-xs sm:text-sm text-white/50 pointer-events-none px-4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6 }}
               >
-                © {new Date().getFullYear()} John Doe. All rights reserved.
+                © {new Date().getFullYear()} Bakht Munir. All rights reserved.
               </motion.div>
             </motion.div>
           </motion.div>
@@ -472,9 +501,9 @@ const OrbitalNavigation = () => {
                           exit: { opacity: 0, y: -10 }
                         }}
                       >
-                        <Link href={route.href} legacyBehavior>
-                          <motion.a
-                            className={`w-10 h-10 flex items-center justify-center rounded-full group relative ${
+                        <Link href={route.href}>
+                          <motion.div
+                            className={`w-10 h-10 flex items-center justify-center rounded-full group relative cursor-pointer ${
                               isActive 
                                 ? `bg-gradient-to-r ${route.color} text-white ring-2 ring-white/20` 
                                 : 'bg-white/10 text-white/70 hover:text-white backdrop-blur-sm'
@@ -504,7 +533,7 @@ const OrbitalNavigation = () => {
                             >
                               {route.name}
                             </motion.div>
-                          </motion.a>
+                          </motion.div>
                         </Link>
                       </motion.div>
                     );
@@ -588,9 +617,9 @@ const OrbitalNavigation = () => {
                           originY: 0.5
                         }}
                       >
-                        <Link href={route.href} legacyBehavior>
-                          <motion.a
-                            className={`w-10 h-10 flex items-center justify-center rounded-full group relative ${
+                        <Link href={route.href}>
+                          <motion.div
+                            className={`w-10 h-10 flex items-center justify-center rounded-full group relative cursor-pointer ${
                               isActive 
                                 ? `bg-gradient-to-r ${route.color} text-white ring-2 ring-white/20` 
                                 : 'bg-white/10 text-white/70 hover:text-white backdrop-blur-sm'
@@ -618,7 +647,7 @@ const OrbitalNavigation = () => {
                             >
                               {route.name}
                             </motion.div>
-                          </motion.a>
+                          </motion.div>
                         </Link>
                       </motion.div>
                     );
@@ -650,26 +679,6 @@ const OrbitalNavigation = () => {
           </>
         )}
       </AnimatePresence>
-      
-      {/* Floating label at bottom indicating scroll for mobile */}
-      <motion.div
-        className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-30 md:hidden"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 2, duration: 0.5 }}
-        exit={{ opacity: 0 }}
-      >
-        <motion.div 
-          className="px-3 py-1.5 bg-black/50 backdrop-blur-sm text-white text-xs rounded-full border border-white/10 flex items-center"
-          animate={{ y: [0, 5, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
-          Scroll to explore
-        </motion.div>
-      </motion.div>
     </>
   );
 };
